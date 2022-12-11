@@ -37,6 +37,17 @@ def country_dataframe(country):
     ['1990','1995','2000','2005','2010','2005','2010','2015','2020'])
     return df
 
+def stat_properties(dataframe):
+    '''This is a function that return some statistical properties of all the columns of the dataframe passed into it'''
+    cols = dataframe.columns
+    from pandas.api.types import is_numeric_dtype
+    for i in cols:
+        if is_numeric_dtype(dataframe[i]):
+            print('This is a brief statistical description of {}'.format(i))
+            print(dataframe[i].describe())
+            print('The Peak-to-Peak of {} is {}'.format(i,np.ptp(dataframe[i])))
+            print('The skewness of {} is {}'.format(i,sp.stats.skew(dataframe[i])))
+            print()
 
 #We would now proceed to create a few dataframes using our predefined function.
 
@@ -58,13 +69,15 @@ df_name_eleccons,df_year_eleccons = data_read(filename,indicators[1],countries,c
 df_name_mortality,df_year_mortality = data_read(filename,indicators[2],countries,cols)
 df_name_co2,df_year_co2 = data_read(filename,indicators[3],countries,cols)
 
+name_list = [df_name_population,df_name_eleccons,df_name_mortality,df_name_co2]
+year_list = [df_year_population,df_year_eleccons,df_year_mortality,df_year_co2]
+
 #Now that we have created our dataframes of interest, we would do a brief descriptive analysis of our table and then plot a few graphs to help us understand our data and selected indicators better.
-
-print(df_name_population)
-print(df_name_co2)
-print(df_name_eleccons)
-print(df_name_mortality)
-
+for i in range(len(year_list)):
+    print('Indicator: {}'.format(indicators[i]))
+    stat_properties(year_list[i])
+    print()
+    
 #This is a line graph that visualizes the population of selected countries for selected years
 plt.figure(figsize=(8,5),dpi=1000)
 for i in range(len(countries)):
@@ -107,16 +120,13 @@ plt.show()
 
 
 #Now we have to create a dataframes for each country with the indicators as features and years as indexes using our predefined function
-
 uk = country_dataframe('United Kingdom')
 usa = country_dataframe('United States')
 china = country_dataframe('China')
 nigeria = country_dataframe('Nigeria')
 russia = country_dataframe('Russian Federation')
 
-
 #Next we plot a correlation heatmap for all countries using seaborn to show the relation between all the indicators
-
 countries = [uk, usa, china, nigeria, russia]
 labels = ['United Kingdom', 'USA', 'China', 'Nigeria', 'Russia']
 
